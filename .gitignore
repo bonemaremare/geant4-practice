@@ -1,0 +1,40 @@
+# build
+build*/
+cmake-build-*/
+*.o
+*.so
+*.a
+
+# Geant4 itself / physics data (kept outside this repo)
+geant4*/
+G4*DATA*/
+
+# raw simulation output (regenerate from code + macro + seed)
+out/
+output/
+*_nt_*.csv
+*.root
+*.hdf5
+*.h5
+*.pkl
+*.npz
+
+# local-only settings (e.g. unpublished detector dimensions)
+local/
+*.local.*
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+# pixi environments
+.pixi/*
+!.pixi/config.toml
