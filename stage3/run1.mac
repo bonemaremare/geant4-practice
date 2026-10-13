@@ -1,8 +1,15 @@
 /run/numberOfThreads  4
+
+/gso/width 5 cm
+/gso/thickness  2 cm
+
+/process/em/fluo true
+
+
 /run/initialize
 
 /random/setSeeds 12345 67890
 
 /gun/particle gamma
-/gun/energy 1 MeV
+/gun/energy 662 keV
 /run/beamOn 10000

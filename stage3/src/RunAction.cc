@@ -19,13 +19,17 @@ RunAction::RunAction()
     analysis->CreateNtupleDColumn("dy0");
     analysis->CreateNtupleDColumn("dz0");
     analysis->CreateNtupleIColumn("n_interactions");
+    analysis->CreateNtupleIColumn("n_hits");
+    analysis->CreateNtupleDColumn("edep_MeV");
+    analysis->CreateNtupleDColumn("edep_step_MeV");
     analysis->FinishNtuple();
 
-    analysis->CreateNtuple("interaction", "gamma interaction in water");
+    analysis->CreateNtuple("interaction", "gamma interaction in GSO");
     analysis->CreateNtupleIColumn("event");
     analysis->CreateNtupleIColumn("id");
     analysis->CreateNtupleIColumn("parent");
     analysis->CreateNtupleIColumn("track");
+    analysis->CreateNtupleSColumn("creator");
     analysis->CreateNtupleSColumn("process");
     analysis->CreateNtupleDColumn("x_mm");
     analysis->CreateNtupleDColumn("y_mm");
@@ -44,7 +48,20 @@ RunAction::RunAction()
     analysis->CreateNtupleDColumn("dy_e");
     analysis->CreateNtupleDColumn("dz_e");
     analysis->CreateNtupleDColumn("e_pos_MeV");
+    analysis->CreateNtupleDColumn("e_charged_MeV");
     analysis->CreateNtupleIColumn("n_secondaries");
+    analysis->FinishNtuple();
+
+    analysis->CreateNtuple("hit", "energy deposits in GSO");
+    analysis->CreateNtupleIColumn("event");
+    analysis->CreateNtupleIColumn("track");
+    analysis->CreateNtupleIColumn("origin");
+    analysis->CreateNtupleSColumn("particle");
+    analysis->CreateNtupleDColumn("x_mm");
+    analysis->CreateNtupleDColumn("y_mm");
+    analysis->CreateNtupleDColumn("z_mm");
+    analysis->CreateNtupleDColumn("t_ns");
+    analysis->CreateNtupleDColumn("edep_MeV");
     analysis->FinishNtuple();
 }
 

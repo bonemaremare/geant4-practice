@@ -15,6 +15,7 @@ struct Interaction
     G4int id = 0;
     G4int parent = -1;
     G4int trackId = 0;
+    G4String creator;
     G4String process;
     G4ThreeVector position;
     G4double time = 0.;
@@ -25,6 +26,7 @@ struct Interaction
     G4double electronEnergy = 0.;
     G4ThreeVector electronDirection;
     G4double positronEnergy = 0.;
+    G4double chargedEnergy = 0.;
     G4int nSecondaries = 0;
 };
 
@@ -39,8 +41,12 @@ public:
 
     G4int AddInteraction(const Interaction &interaction);
 
+    void AddEdep(G4double edep) { fEdepStepping += edep; }
+
 private:
     std::vector<Interaction> fInteractions;
+    G4double fEdepStepping = 0;
+    G4int fHitsCollectionId = -1;
 };
 
 #endif

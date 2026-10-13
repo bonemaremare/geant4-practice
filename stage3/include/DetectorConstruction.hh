@@ -3,13 +3,13 @@
 
 #include "G4SystemOfUnits.hh"
 #include "G4VUserDetectorConstruction.hh"
-"
+
 #include "globals.hh"
 
-    class G4GenericMessenger;
+class G4GenericMessenger;
 class G4VPhysicalVolume;
 
-class DetectorConstruction : public G4VUserActionInitialization
+class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
     DetectorConstruction();
@@ -17,7 +17,7 @@ public:
 
     G4VPhysicalVolume *Construct() override;
 
-    // void ConstructSDandField() override;
+    void ConstructSDandField() override;
 
 private:
     G4double fWidth = 5. * cm;

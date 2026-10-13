@@ -24,18 +24,24 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
 
     auto prePoint = step->GetPreStepPoint();
     auto postPoint = step->GetPostStepPoint();
-    const G4VProcess *process = postPoint->GetProcessDefinedStep();
-    G4bool isGammaInteractionInWater =
-        track->GetDefinition() == G4Gamma::Definition() && prePoint->GetTouchableHandle()->GetVolume()->GetName() == "Water" && process != nullptr
+    G4bool inGso = prePoint->GetTouchableHandle()->GetVolume()->GetName() == "GSO";
 
-        && process->GetProcessName() != "Transportation";
+    if (inGso)
+        fEventAction->AddEdep(step->GetTotalEnergyDeposit());
+
+    const G4VProcess *process = postPoint->GetProcessDefinedStep();
+    G4bool isGammaInteractionInGso =
+        track->GetDefinition() == G4Gamma::Definition() && inGso && process != nullptr && process->GetProcessName() != "Transportation";
+
     const auto *secondaries = step->GetSecondaryInCurrentStep();
 
-    if (isGammaInteractionInWater)
+    if (isGammaInteractionInGso)
     {
         Interaction interaction;
         interaction.parent = info->GetOrigin();
         interaction.trackId = track->GetTrackID();
+        auto creator = track->GetCreatorProcess();
+        interaction.creator = (creator != nullptr) ? creator->GetProcessName() : G4String("primary");
         interaction.process = process->GetProcessName();
         interaction.position = postPoint->GetPosition();
         interaction.time = postPoint->GetGlobalTime();
@@ -45,17 +51,23 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
         if (interaction.energyOut > 0.)
             interaction.directionOut = postPoint->GetMomentumDirection();
         interaction.nSecondaries = secondaries->size();
+        interaction.chargedEnergy = step->GetTotalEnergyDeposit();
 
         for (const auto *secondary : *secondaries)
         {
             G4double energy = secondary->GetKineticEnergy();
-            if (secondary->GetDefinition() == G4Electron::Definition() && energy > interaction.electronEnergy)
+            if (secondary->GetDefinition() == G4Electron::Definition())
             {
-                interaction.electronEnergy = energy;
-                interaction.electronDirection = secondary->GetMomentumDirection();
+                interaction.chargedEnergy += energy;
+                if (energy > interaction.electronEnergy)
+                {
+                    interaction.electronEnergy = energy;
+                    interaction.electronDirection = secondary->GetMomentumDirection();
+                }
             }
             if (secondary->GetDefinition() == G4Positron::Definition())
             {
+                interaction.chargedEnergy += energy;
                 interaction.positronEnergy = energy;
             }
         }
@@ -64,6 +76,7 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
         info->SetOrigin(id);
         originForSecondaries = id;
     }
+
     for (const auto *secondary : *secondaries)
     {
         const_cast<G4Track *>(secondary)->SetUserInformation(new TrackInformation(originForSecondaries));
